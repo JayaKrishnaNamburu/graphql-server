@@ -3,10 +3,10 @@ const log = console.log;
 const express = require('express');
 const app = express();
 const graphqlHTTP = require('express-graphql');
-const schema = require('./schemas/schema');
+const { schema, queries } = require('./schemas/schema-sdl');
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://127.0.0.1:27017/graph-books', {useNewUrlParser: true} ,(err) => {
+mongoose.connect('mongodb://mongo:27017/graph-books', {useNewUrlParser: true} ,(err) => {
     if (err) {
         log(chalk.red('failed to connect to the database'));
     } else {
@@ -16,7 +16,13 @@ mongoose.connect('mongodb://127.0.0.1:27017/graph-books', {useNewUrlParser: true
 
 app.use('/graphql', graphqlHTTP({
     graphiql: true,
-    schema: schema
+    schema: schema,
+    rootValue: queries,
+    formatError: error => ({
+    message: error.message,
+    locations: error.locations,
+    stack: error.stack ? error.stack.split('\n') : [],
+    })
 }));
 
 app.listen(8000, () => {

@@ -1,0 +1,11 @@
+graph-book:
+  build: .
+  links:
+    - mongo
+  ports:
+    - "8000:8000"
+
+mongo: 
+  image: mongo
+  ports:
+    - "27017:27017"
