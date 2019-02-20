@@ -1,1 +1,1 @@
-GraphQL implementation using MongoDB and Nodejs
+GraphQL implementation using MongoDB, Nodejs and Docker
