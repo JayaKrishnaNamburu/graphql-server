@@ -48,6 +48,7 @@ const typeDefs = `
         addMultipleAuthors(
             authors:    [IncomingAuthorsList]
         ): [Author],
+        dropData: Author,
     }
 `;
 
@@ -99,7 +100,30 @@ const resolvers = {
             } catch(err) {
                 
             }
-        }
+        },
+        dropData: async () => {
+            function deleteAuthors() {
+                return Author.remove();
+            }
+
+            function deleteBooks() {
+                return Book.remove();
+            }
+
+            async function drop() {
+                await deleteAuthors();
+                await deleteBooks();
+                return;
+            }
+
+            try {
+                const result = await drop();
+                console.log(result);
+                return result;
+            } catch(err) {
+
+            }
+        }   
     }
 }
 
