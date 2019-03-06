@@ -1,12 +1,10 @@
 const chalk = require('chalk');
 const log = console.log;
-const express = require('express');
-const app = express();
-const graphqlHTTP = require('express-graphql');
+const { ApolloServer } = require('apollo-server');
 const { schema, queries } = require('./schemas/schema-sdl');
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://mongo:27017/graph-books', {useNewUrlParser: true} ,(err) => {
+mongoose.connect('mongodb://localhost:27017/graph-books', {useNewUrlParser: true} ,(err) => {
     if (err) {
         log(chalk.red('failed to connect to the database'));
     } else {
@@ -14,17 +12,14 @@ mongoose.connect('mongodb://mongo:27017/graph-books', {useNewUrlParser: true} ,(
     }
 });
 
-app.use('/graphql', graphqlHTTP({
-    graphiql: true,
+ const server = new ApolloServer({
     schema: schema,
     rootValue: queries,
-    formatError: error => ({
-    message: error.message,
-    locations: error.locations,
-    stack: error.stack ? error.stack.split('\n') : [],
-    })
-}));
+    formatError: error => {
+        return new Error('Internal server error');
+    },
+});
 
-app.listen(8000, () => {
-    log(chalk.yellow('Server started running at 8000'));
+server.listen().then(({ url }) => {
+    chalk.green(log(`🚀  Server ready at ${url}`));
 });

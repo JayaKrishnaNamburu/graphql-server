@@ -5,9 +5,17 @@ const Book = require('../models/book');
 const typeDefs = `
     type Author {
         id: String!
+        """
+            Just describing 
+        """
         name: String!
         age: Int
         books: [Book]
+    }
+
+    input IncomingAuthorsList {
+        name: String!
+        age: Int!
     }
 
     type Book {
@@ -21,7 +29,7 @@ const typeDefs = `
         authors: [Author]
         books: [Book],
         book(id: String!): Book,
-        author(id: String!): Author,
+        author(id: String!): Author
     }
 
     type Mutation {
@@ -33,7 +41,13 @@ const typeDefs = `
             name: String!,
             genre: String,
             author_id: String!,
-        ): Book
+        ): Book,
+        deleteAuthor(
+            id: String!
+        ): Author,
+        addMultipleAuthors(
+            authors:    [IncomingAuthorsList]
+        ): [Author],
     }
 `;
 
@@ -54,6 +68,7 @@ const queries = {
 
 
 const resolvers = {
+    // resolvers are related ot stuff defined in typedefs
     Author: {
         books: (author) => {
             return Book.find({ author_id: author.id });
@@ -70,6 +85,20 @@ const resolvers = {
         },
         addBook: (_, payload) => {
             return Book.create(payload);
+        },
+        deleteAuthor: (_, payload) => {
+            return Author.findByIdAndDelete(payload.id);
+        },
+        addMultipleAuthors: async (_, payload) => {
+            function insertDocs() {
+                return Author.insertMany(payload.authors);
+            }
+            try {
+                const result = await insertDocs();
+                return result;
+            } catch(err) {
+                
+            }
         }
     }
 }
