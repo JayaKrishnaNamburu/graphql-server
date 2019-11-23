@@ -4,7 +4,7 @@ const { ApolloServer } = require('apollo-server');
 const { schema, queries } = require('./schemas/schema-sdl');
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/graph-books', {useNewUrlParser: true} ,(err) => {
+mongoose.connect('mongodb://mongo:27017/graph-books', {useNewUrlParser: true} ,(err) => {
     if (err) {
         log(chalk.red('failed to connect to the database'));
     } else {
